@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.0/css/bulma.min.css">
+    <title>Edit User Details</title>
+    <style>
+        /* Add some basic styling to the form */
+        html{
+            background-color: #060633;
+        }
+        form {
+            max-width: 500px;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #1b5188e9;
+            border-radius: 5px;
+            color: #060633;
+            background-color: #1b5188e9;;
+        }
+        h1{
+            color: #060633;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #060633;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 5px;
+            align-content: center;
+            box-sizing: border-box;
+        }
+        input[type="button"] {
+            background-color:#060633;
+            color:  #ccc;
+            border: none;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+        input[type="button"]:hover {
+            background-color:#4396e9e9;
+            color: #ccc;
+        }
+    </style>
+    <script>
+        const token = localStorage.getItem('token')
+        let isEditing = false;
+
+        function toggleEdit() {
+    isEditing = !isEditing;
+    const inputs = document.getElementsByTagName('input');
+    for (let i = 0; i < inputs.length; i++) {
+        inputs[i].disabled = !isEditing;
+    }
+
+    // Update button label based on editing state
+    const editButton = document.getElementById('edit-button');
+    if (isEditing) {
+        editButton.value = 'Cancel';
+        document.getElementById('update-button').style.display = 'inline';
+    } else {
+        editButton.value = 'Edit';
+        document.getElementById('update-button').style.display = 'none';
+    }
+
+    if (!isEditing) {
+        location.reload(); // Reload the page if cancel is clicked
+    }
+
+    return false; // Prevent form submission
+}
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+
+
+
+        // Update the form action to submit a PATCH request
+        function updateDetails() {
+            // Check if currently in editing state
+            if (isEditing) {
+                const userId = localStorage.getItem('userId'); // Get user ID from localStorage
+                const csrfToken = getCookie('csrftoken'); // get CSRF token from cookie
+                const xhr = new XMLHttpRequest();
+                xhr.open('PATCH', '/api/editalumnidetails/' + userId + '/');
+                xhr.setRequestHeader('Content-Type', 'application/json');
+                xhr.setRequestHeader('X-CSRFToken', csrfToken); // add CSRF token to headers
+                // Include _method field to simulate PATCH request
+                const form_data = new FormData(document.getElementById('edit-form'));
+                //form_data.append('_method', 'PATCH');
+                const json_data = JSON.stringify(Object.fromEntries(form_data));
+                xhr.onload = function () {
+                    if (xhr.status === 200) {
+                        // Handle successful update
+                        alert('User details updated successfully');
+                        toggleEdit(); // Disable editing after update
+                    } else {
+                        // Handle error
+                        alert('Error updating user details');
+                    }
+                };
+                xhr.send(json_data);
+            } else {
+                toggleEdit(); // Enable editing
+                return false; // Prevent form submission
+            }
+        }
+    </script>
+</head>
+<body>
+    {% extends 'alumnibase.html' %}
+    {% block content %}
+    <h1>Edit User Details</h1>
+
+    <form method="post" id="edit-form">
+        {% csrf_token %}
+        <label for="current_company">Current Company:</label>
+        <input type="text" name="current_company" value="{{ form.current_company }}" disabled><br> <!-- Update to access data from related table -->
+        <label for="domain">Domain:</label>
+        <input type="text" name="domain" value="{{ form.domain }}" disabled><br> <!-- Update to access data from related table -->
+        <label for="current_jobrole">Current Job Role:</label>
+        <input type="text" name="current_jobrole" value="{{ form.current_jobrole }}" disabled><br> <!-- Update to access data from related table -->
+        <label for="mobile_no">mobile number:</label>
+        <input type="text" name="mobile_no" value="{{ form.mobile_no }}" disabled><br>
+        <!-- Add other fields for user details here with disabled attribute -->
+        <input type="button" value="Edit" id="edit-button" onclick="toggleEdit()">
+        <input type="button" value="Update" id="update-button" style="display:none" onclick="updateDetails()"> <!-- Add Update button -->
+    </form>
+
+    {% endblock %}
+</body>
+</html>

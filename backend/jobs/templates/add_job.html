@@ -1,0 +1,254 @@
+{% extends 'alumnibase.html' %}
+
+{% block content %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.0/css/bulma.min.css">
+    <div id="add-job-app">
+        <h1 style="color: rgb(16, 55, 90); margin-left: 230px;">Add job</h1>
+
+        <form v-on:submit="validateForm" method="post" action=".">
+            {% csrf_token %}
+
+            {% if form.errors %}
+            <label> You forgot to add</label>
+                {% for error in form.errors %}
+                    <div >
+                       <label> {{ error }}</label> 
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <div class="field">
+                <label>Title</label>
+
+                <div class="control">
+                    <input class="input" type="text" name="title" id="id_title" v-model="title" placeholder="Job Title">
+                </div>
+            </div>
+
+            <div class="field">
+                <label>Short description</label>
+
+                <div class="control">
+                    <textarea class="textarea" name="short_description" id="id_short_description" v-model="short_description" placeholder="desc"></textarea>
+                </div>
+            </div>
+
+            <div class="field">
+                <label>Long description</label>
+
+                <div class="control">
+                    <textarea class="textarea" name="long_description" id="id_long_description" placeholder="Description"></textarea>
+                </div>
+            </div>
+
+            <div class="field">
+                <label>Company name</label>
+
+                <div class="control">
+                    <input class="input" type="text" name="company_name" id="id_company_name" v-model="company_name" placeholder="Company name">
+                </div>
+            </div>
+
+            <div class="field">
+                <label>location</label>
+
+                <div class="control">
+                    <input class="input" type="text" name="location" id="id_location" placeholder="city">
+                </div>
+            </div>
+
+            <div class="field">
+                <label>Pay offered</label>
+
+                <div class="control">
+                    <input class="input" type="text" name="pay_offered" id="id_pay_offered" placeholder="ex: 2000000">
+                </div>
+            </div>
+
+            <div class="field">
+                <label>Skills required</label>
+                <div class="control">
+                    <input type="text" name="new_skill"  id="new_skills" >
+                    <input type="button" value="Add Skills" onclick="addSkill()" id="add-skills-button">
+                </div>
+                <ul id="skills_list"></ul>
+            </div>
+            
+
+
+            <div class="field">
+                <label>Job offer type</label>
+
+                <div class="control">
+                    <div class="select">
+                        <select name="job_offer_type" v-model="job_offer_type">
+                            <option value="">Choose offer type</option>
+                            <option value="intern">Intern</option>
+                            <option value="fulltime">Full-Time</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="field">
+                <div class="control">
+                    <button  type="submit">Add</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <style>
+        #add-job-app {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.button {
+  background-color: #1b5188e9;
+  border-color: #1b5188e9;
+  color: #fff;
+  font-weight: bold;
+  padding: 0.5rem 0.75rem;
+}
+
+.button:hover,
+.button:focus {
+  background-color: #24709f;
+  border-color: #1e4e97;
+}
+form {
+            max-width: 500px;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #1b5188e9;
+            border-radius: 5px;
+            color: #060633;
+            background-color: #1b5188e9;;
+        }
+        ul{
+            background-color:  aliceblue;
+            color:  #1b5188e9;
+            border: none;
+            border-color: black;
+            margin-top: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: Arial, Helvetica, sans-serif;
+            width: 80px;
+
+        }
+        h1{
+            color: #060633;
+        }
+        h3{
+            color: red;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #060633;
+        } 
+        input[type="text"] {
+            width: 100%;
+            padding: 5px;
+            align-content: center;
+            box-sizing: border-box;
+        }
+        input[type="button"] {
+            background-color:#060633;
+            color:  #ccc;
+            border: none;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+        input[type="button"]:hover {
+            background-color:#4396e9e9;
+            color: #ccc;
+        }
+        button{
+            background-color:#060633;;
+            color:  #ccc;
+            border: none;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: Arial, Helvetica, sans-serif;
+            width: 80px;
+        }
+        button:hover {
+            background-color:#4396e9e9;
+            color: #ccc;
+        }
+    </style>
+    <script>
+        function addSkill() {
+        const skillInput = document.getElementById("new_skills");
+        const skill = skillInput.value.trim();
+
+        if (skill) {
+            const skillsList = document.getElementById("skills_list");
+            const newSkill = document.createElement("li");
+            newSkill.innerHTML = skill;
+            skillsList.appendChild(newSkill);
+            skillInput.value = "";
+            skills_required = skillsList;
+        }
+    }
+    </script>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    
+
+    const AddJobApp = {
+        data() {
+            return {
+                title: '',
+                company_name: '',
+                short_description: '',
+                job_offer_type: '',
+                errors: []
+            }
+        },
+        delimiters: ['[[', ']]'],
+        methods: {
+            validateForm(e) {
+                this.errors = []
+
+                if (this.title === '') {
+                    this.errors.push('The title field is missing!')
+                }
+
+                if (this.short_description === '') {
+                    this.errors.push('The short description field is missing!')
+                }
+
+                if (this.company_name === '') {
+                    this.errors.push('The company name field is missing!')
+                }
+
+                if (this.job_offer_type === '') {
+                    this.errors.push('The job_offer_type is missing!')
+                }
+
+                if (this.errors.length) {
+                    e.preventDefault()
+
+                    return false
+                } else {
+                    return true
+                }
+            }
+        }
+    }
+
+    Vue.createApp(AddJobApp).mount('#add-job-app');
+</script>
+{% endblock %}

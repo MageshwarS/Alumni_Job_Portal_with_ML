@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html>
+<head>
+  
+    <title>Edit User Details</title>
+    <style>
+        /* Add some basic styling to the form */
+        form {
+            max-width: 500px;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        h1{
+            color: #ccc;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: azure;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 5px;
+            align-content: center;
+            box-sizing: border-box;
+        }
+        input[type="button"] {
+            background-color:#1b5188e9;
+            color:  #ccc;
+            border: none;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+        input[type="button1"] {
+            background-color:#1b5188e9;
+            color:  #ccc;
+            border: none;
+            padding:5px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: Arial, Helvetica, sans-serif;
+            width: 10px;
+        }
+        input[type="button"]:hover {
+            background-color:#4396e9e9;
+            color: #ccc;
+        }
+        #add-skills-button,
+#add-skills-input {
+    display: none;
+}
+
+        .tags {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.tag {
+  margin: 1px;
+  margin-left: 30px;
+  margin-right: 20px;
+  font-size: 14px;
+  width: 80%;
+  height:max-content;
+}
+.tags-div{
+    display:flex;
+    align-content: center;
+    align-items: center;
+    align-self: center;
+}
+
+    </style>
+    <script>
+
+
+function addSkill() {
+        const skill = document.getElementsByName("new_skill")[0].value;
+        const tag = document.createElement("input");
+        tag.setAttribute("class", "tag");
+        tag.setAttribute("type", "text");
+        tag.setAttribute("name", "skillset");
+        tag.setAttribute("value", skill);
+        document.querySelector(".tags").appendChild(tag);
+        document.getElementsByName("new_skill")[0].value = "";
+        const removeButton = document.createElement("button");
+        removeButton.textContent = "Remove Skill";
+        removeButton.addEventListener("click", () => {
+            document.querySelector(".tags").removeChild(tag);
+            document.querySelector(".tags").removeChild(removeButton);
+        });
+        document.querySelector(".tags").appendChild(removeButton);
+    }
+
+
+    
+        const token = localStorage.getItem('token')
+        let isEditing = false;
+
+        function toggleEdit() {
+    isEditing = !isEditing;
+    const inputs = document.getElementsByTagName('input');
+    for (let i = 0; i < inputs.length; i++) {
+        inputs[i].disabled = !isEditing;
+    }
+
+    // Update button label based on editing state
+    const editButton = document.getElementById('edit-button');
+    if (isEditing) {
+        editButton.value = 'Cancel';
+        document.getElementById('update-button').style.display = 'inline';
+        document.getElementById('add-skills-button').style.display = 'inline';
+    } else {
+        editButton.value = 'Edit';
+        document.getElementById('update-button').style.display = 'none';
+        document.getElementById('add-skills-button').style.display = 'none';
+        
+    }
+    if (!isEditing) {
+      location.reload(); // Reload the page if cancel is clicked
+  }
+
+    return false; // Prevent form submission
+}
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+function removeSkill(event) {
+  const clickedButton = event.target;
+  const tagContainer = clickedButton.parentNode;
+  tagContainer.remove();
+}
+
+
+const removeSkillButtons = document.getElementsByClassName("remove-skill");
+for (let i = 0; i < removeSkillButtons.length; i++) {
+  removeSkillButtons[i].addEventListener("click", removeSkill);
+}
+
+// Update the form action to submit a PATCH request
+function updateDetails() {
+  // Check if currently in editing state
+  if (isEditing) {
+    const userId = localStorage.getItem('userId'); // Get user ID from localStorage
+    const csrfToken = getCookie('csrftoken'); // get CSRF token from cookie
+    const xhr = new XMLHttpRequest();
+    xhr.open('PATCH', '/api/editstudentdetails/' + userId + '/');
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.setRequestHeader('X-CSRFToken', csrfToken); // add CSRF token to headers
+    // Include _method field to simulate PATCH request
+    const form_data = new FormData(document.getElementById('edit-form'));
+    const skillset = Array.from(form_data.getAll("skillset"));
+
+    const tagContainers = document.querySelectorAll('.tag-container');
+    const skillsToRemove = [];
+    tagContainers.forEach((container, index) => {
+      const removeButton = container.querySelector('.remove-skill');
+      if (removeButton) {
+        removeButton.addEventListener('click', () => {
+          container.remove();
+          skillsToRemove.push(skillset[index]);
+        });
+      }
+    });
+    const updatedSkillset = skillset.filter(skill => !skillsToRemove.includes(skill));
+
+    const json_data = JSON.stringify({
+      "current_sem": form_data.get("current_sem"),
+      "current_cgpa": form_data.get("current_cgpa"),
+      "standing_arrears": form_data.get("standing_arrears"),
+      "mobile_no": form_data.get("mobile_no"),
+      "skillset": updatedSkillset
+    });
+    xhr.onload = function () {
+      if (xhr.status === 200) {
+        // Handle successful update
+        alert('User details updated successfully');
+        toggleEdit(); // Disable editing after update
+      } else {
+        // Handle error
+        alert('Error updating user details');
+      }
+    };
+    xhr.send(json_data);
+  } else {
+    toggleEdit(); // Enable editing
+    return false; // Prevent form submission
+  }
+}
+
+
+    </script>
+</head>
+<body>
+    {% extends 'studentbase.html' %}
+    {% block content %}
+    <h1>Edit User Details</h1>
+
+    <form method="post" id="edit-form">
+        {% csrf_token %}
+        <label for="current_sem">Current Sem:</label>
+        <input type="text" name="current_sem" value="{{ form.current_sem }}" disabled><br> <!-- Update to access data from related table -->
+        <label for="current_cgpa">Current Cgpa:</label>
+        <input type="text" name="current_cgpa" value="{{ form.current_cgpa }}" disabled><br> <!-- Update to access data from related table -->
+        <label for="standing_arrears">Standing Arrears:</label>
+        <input type="text" name="standing_arrears" value="{{ form.standing_arrears }}" disabled><br> 
+        <label for="skillset">Skillset:</label>
+        <div class="tags">
+            {% for skill in form.skillset %}
+        <div class="tags-div">
+    <input class="tag" type="text" name="skillset" value="{{ skill }}" disabled><br> 
+    <input type="button1" class="remove-skill" value="X" onclick="removeSkill(event)" disabled><br>
+</div>
+{% endfor %}
+
+        </div>
+        <div>
+            <input type="text" name="new_skill" id="add-skills-input">
+            <input type="button" value="Add Skills" onclick="addSkill()" id="add-skills-button">
+        </div>
+        <label for="mobile_no">mobile number:</label>
+        <input type="text" name="mobile_no" value="{{ form.mobile_no }}" disabled><br>
+        <!-- Add other fields for user details here with disabled attribute -->
+        <input type="button" value="Edit" id="edit-button" onclick="toggleEdit()">
+        <input type="button" value="Update" id="update-button" style="display:none" onclick="updateDetails()"> <!-- Add Update button -->
+    </form>
+
+    {% endblock %}
+</body>
+</html>

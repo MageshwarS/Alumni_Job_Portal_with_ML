@@ -1,0 +1,137 @@
+Alumni table:
+
+CREATE TABLE alumni (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(455) NOT NULL,
+    register_no VARCHAR(20),
+    branch VARCHAR(255) NOT NULL,
+    specialization VARCHAR(355) NOT NULL,
+    passed_out_year INTEGER NOT NULL,
+    department VARCHAR(255) DEFAULT 'ist',
+    mobile_no VARCHAR(20) NOT NULL,
+    email VARCHAR(255) NOT NULL
+);
+
+
+
+Alumni_details table:
+create TABLE alumni_details (
+    id SERIAL PRIMARY KEY,
+    alumni_id INTEGER NOT NULL REFERENCES alumni(id),
+    current_company VARCHAR(255) NOT NULL,
+	domain VARCHAR(255) NOT NULL,
+    current_jobrole VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    mobile_no VARCHAR(15) NOT NULL,
+    password VARCHAR(255) NOT NULL
+);
+alter table alumni_details 
+add column register_no VARCHAR(20),
+add column branch VARCHAR(255) NOT NULL,
+add column specialization VARCHAR(355) NOT NULL,
+add column passed_out_year INTEGER NOT NULL,
+add column department VARCHAR(255) DEFAULT 'IST';
+
+
+
+students table:
+CREATE TABLE students (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(455) NOT NULL,
+    register_no VARCHAR(20) NOT NULL,
+    branch VARCHAR(255) NOT NULL,
+    specialization VARCHAR(355) NOT NULL,
+    department VARCHAR(255) DEFAULT 'ist',
+    mobile_no VARCHAR(20) NOT NULL,
+    email VARCHAR(355) NOT NULL
+);
+
+students details table:
+CREATE TABLE students_details (
+    id SERIAL PRIMARY KEY,
+    student_id INTEGER NOT NULL REFERENCES students(id),
+    current_sem INTEGER NOT NULL,
+	current_year INTEGER NOT NULL,
+	current_cgpa FLOAT NOT NULL,
+	standing_arrears INTEGER,
+	skillset TEXT[],
+	projects JSONB,
+    email VARCHAR(255) NOT NULL,
+    mobile_no VARCHAR(15) NOT NULL,
+    password VARCHAR(255) NOT NULL
+);
+
+alter table students_details 
+add column register_no VARCHAR(20),
+add column branch VARCHAR(255) NOT NULL,
+add column specialization VARCHAR(355) NOT NULL,
+add column department VARCHAR(255) DEFAULT 'IST';
+
+
+Jobs Table: 
+CREATE TABLE jobs (
+    id SERIAL PRIMARY KEY,
+    title VARCHAR(255),
+    short_description TEXT,
+    long_description TEXT,
+    location VARCHAR(255),
+    company_name VARCHAR(455),
+    posted_by_id INTEGER REFERENCES apis_portaluser(id),
+    pay_offered NUMERIC,
+    status VARCHAR(10),
+    skills_required CHAR(355)[],
+    job_offer_type VARCHAR(10)
+);
+
+applications Table:
+CREATE TABLE applications (
+    id SERIAL PRIMARY KEY,
+    job_id INTEGER REFERENCES jobs (id) ON DELETE CASCADE,
+    content TEXT,
+    experience TEXT,
+    created_by_id INTEGER REFERENCES apis_portaluser(id),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+ALTER TABLE applications ADD COLUMN status VARCHAR(10) NOT NULL DEFAULT 'active' CHECK (status IN ('active', 'closed'));
+
+
+Other websites jobs handling:
+CREATE TABLE other_portals(
+    id SERIAL PRIMARY KEY,
+	portal_name VARCHAR(255)
+	);
+INSERT INTO other_portals (portal_name) VALUES ('Linkedin');
+
+CREATE TABLE other_jobs (
+    id SERIAL PRIMARY KEY,
+    title VARCHAR(355),
+    company_name VARCHAR(455),
+    location VARCHAR(255),
+    description TEXT,
+    link TEXT,
+    experience_needed VARCHAR(100),
+    salary VARCHAR(100),
+    skills_required CHAR(355)[],
+    other_portal_id INTEGER REFERENCES other_portals(id),
+    status VARCHAR(10) NOT NULL DEFAULT 'active' CHECK (status IN ('active', 'closed'))
+);
+
+ALTER TABLE students_details ADD COLUMN resume_path text;
+
+
+CREATE TABLE other_jobs_clicked (
+    id SERIAL PRIMARY KEY,
+    other_job_id INTEGER REFERENCES other_jobs (id) ON DELETE CASCADE,
+    created_by_id INTEGER REFERENCES apis_portaluser(id),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+delete_dup query:
+DELETE FROM jobs
+WHERE ctid NOT IN (
+  SELECT min(ctid)
+  FROM jobs
+  GROUP BY title, company_name, location, skills_required, job_offer_type, posted_by_id, long_description
+);
+
+select * from jobs

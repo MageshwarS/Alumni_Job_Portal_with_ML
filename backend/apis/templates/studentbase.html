@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Student</title>
+    <style>
+        /* Set background color to blue */
+        body {
+            background-color: #060633;
+        }
+
+         /* Style for side navbar */
+    .sidenav {
+        width: 200px;
+        position: fixed;
+        z-index: 1;
+        top: 0;
+        left: 0;
+        background-color: #1b5188;
+        padding-top: 60px; /* Set padding to account for navbar height */
+        border-radius: 2px;
+        box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
+    }
+
+    .sidenav a {
+        display: block;
+        padding: 16px;
+        font-size: 18px;
+        color: #fff;
+        text-decoration: none;
+        transition: 0.3s;
+        border-bottom: 1px solid #fff;
+    }
+
+    .sidenav a:hover {
+        background-color: #fff;
+        color: #1b5188;
+    }
+
+    .sidenav a.active {
+        background-color: #fff;
+        color: #1b5188;
+    }
+
+    /* Style for main content container */
+    .content {
+        margin-left: 200px; /* Set margin to account for sidenav width */
+        padding: 20px;
+        box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
+        background-color: rgb(10, 93, 165);
+        border-radius: 2px;
+    }
+
+    /* Add responsive styles for smaller screens */
+    @media screen and (max-width: 600px) {
+        .sidenav {
+            width: 100%;
+            height: auto;
+            position: relative;
+            padding-top: 0;
+        }
+
+        .sidenav a {
+            padding: 8px 8px 8px 16px;
+            font-size: 18px;
+            color: aliceblue;
+            display: block;
+            cursor: pointer;
+        }
+
+        .content {
+            margin-left: 0;
+            padding: 20px;
+        }
+    }
+     body {
+           
+            font-family: Arial, sans-serif;
+        }
+    </style>
+    <script>
+        // Get the userId value from your backend or wherever it's available
+        const userId = localStorage.getItem('userId');// Replace with actual userId value
+        window.onload = function() {
+        // Get the userId value from your backend or wherever it's available
+        const userId = localStorage.getItem('userId');// Replace with actual userId value
+
+        // Update the href of the "Edit User" link with the userId value
+        var editUserLink = document.getElementById('editUserLink');
+        editUserLink.href = "/api/editstudentdetails/" + userId;
+
+        // Attach event listener to the logout link
+        var logoutLink = document.getElementById("logoutLink");
+logoutLink.addEventListener("click", function() {
+    // Make a POST request to the logout endpoint
+    const token = localStorage.getItem('token');
+    fetch("http://127.0.0.1:8000/logout/", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Token " + token,
+            "X-CSRFToken": getCookie("csrftoken") // include CSRF token in header
+        },
+        credentials: "same-origin"
+    })
+    .then(response => {
+        if (response.ok) {
+            // If logout is successful, redirect to the login page
+            localStorage.removeItem('token');
+            localStorage.removeItem('userId');
+            deleteCookie("sessionid")
+            deleteCookie("csrftoken"); // delete CSRF token cookie
+            window.location.href = "http://127.0.0.1:8000/studentlogin";
+        } else {
+            // If logout fails, display an error message
+            alert("Logout failed.");
+        }
+    });
+});
+
+// Function to get a cookie by name
+function getCookie(name) {
+    var value = "; " + document.cookie;
+    var parts = value.split("; " + name + "=");
+    if (parts.length == 2) {
+        return parts.pop().split(";").shift();
+    }
+}
+
+// Function to delete a cookie by name
+function deleteCookie(name) {
+    document.cookie = name + "=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;";
+}
+
+    }
+    </script>
+</head>
+<body>
+    {% if user.is_authenticated %}
+    
+    <div class="sidenav">
+        <a href="#" id="editUserLink">Profile</a>
+        <a href="http://127.0.0.1:8000/viewjobs" id="viewjobs">ViewJobs</a>
+        <a id="logoutLink" >Logout {% csrf_token %}</a>
+    </div>
+    <div class="content">
+        <!-- Content of the page goes here -->
+        {% block content %}{% endblock %}
+    </div>
+    {% else %}
+    
+    <div>
+        <h1> You have been Logged out. Please Login to continue.</h1>
+        <a href="http://127.0.0.1:8000/" id="homepage">Home Page</a>
+        <a href="http://127.0.0.1:8000/studentlogin/" id="loginpage" >Login?</a>
+    </div>
+    {% endif %}
+</body>
+</html>

@@ -1,0 +1,61 @@
+{% extends "studentbase.html" %}
+
+{% block content %}
+<style>
+    .job-card {
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 10px;
+  margin-bottom: 20px;
+  transition: box-shadow 0.3s ease;
+  box-shadow: 0px 0px 5px #ccc;
+  background-color: aliceblue;
+  width: 60%;
+}
+
+.job-card:hover {
+  box-shadow: 5px  5px 5px #9b2b2b;
+  cursor: pointer;
+  animation: bounce_613 0.4s linear;
+}
+
+.job-card h5 {
+  margin-bottom: 10px;
+}
+
+.job-card p {
+  margin-bottom: 5px;
+}
+
+.job-card .details {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+</style>
+  <h2>Active Job Listings</h2>
+  {% if jobs %}
+    <div class="job-list">
+      {% for job in jobs %}
+        <div class="job-card">
+          <h1>{{ job.title }}</h1>
+          <p>{{ job.short_description }}</p>
+          <p><strong>Location:</strong> {{ job.location }}</p>
+          <p><strong>Company:</strong> {{ job.company_name }}</p>
+          <p><strong>Pay Offered:</strong> Rs:{{ job.pay_offered }}</p>
+          <p><strong>Skills Required:</strong> {{ job.skills_required }}</p>
+          <p><strong>Skills Required:</strong> {% for jobs in job.skills_required %}</p>
+          <li> {{jobs}}</li>
+          {% endfor %}
+          <div class="details">
+            <a href="#" class="btn">View</a>
+            <small>{{ job.posted_on|date:"F j, Y" }}</small>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p>No active jobs available.</p>
+  {% endif %}
+{% endblock %}

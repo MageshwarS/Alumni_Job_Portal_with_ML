@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html>
+<head>
+    {% load static %}
+    <title>IstASNetwork</title>
+    <link rel="stylesheet" href="{% static 'css/services.css' %}">
+    <!-- Additional CSS or head content goes here -->
+
+    <style>
+        /* CSS styles for section with id "contact" */
+        #contact {
+  background-color: #060633;
+  padding: 60px;
+  
+}
+
+.card12 {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #e7e7e7;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    overflow: hidden;
+    height: 50px;
+    width: fit-content;
+
+}
+
+.card12::before, .card12::after {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    transition: 0.25s linear;
+    z-index: 1;
+  }
+  
+  .card12::before {
+    content: "";
+    left: 0;
+    justify-content: flex-end;
+    background-color: #4d60b6;
+  }
+  
+  .card12::after {
+    content: "";
+    right: 0;
+    justify-content: flex-start;
+    background-color: #4d60b6;
+  }
+  
+  .card12:hover {
+    box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+  }
+  
+  .card12:hover span {
+    opacity: 0;
+    z-index: -3;
+  }
+  
+  .card12:hover::before {
+    opacity: 0.5;
+    transform: translateY(-100%);
+  }
+  
+  .card12:hover::after {
+    opacity: 0.5;
+    transform: translateY(100%);
+  }
+
+.card12 span {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    color: whitesmoke;
+    font-family: 'Fira Mono', monospace;
+    font-size: 24px;
+    font-weight: 700;
+    opacity: 1;
+    transition: opacity 0.25s;
+    z-index: 2;
+}
+
+.social-link {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 25%;
+    height: 100%;
+    color: whitesmoke;
+    font-size: 24px;
+    text-decoration: none;
+    transition: 0.25s;
+}
+
+.social-link svg {
+    text-shadow: 1px 1px rgba(31, 114, 203, 0.7);
+    transform: scale(1);
+    height:inherit;
+}
+
+.social-link:hover svg {
+    background-color: rgba(255, 255, 255, 0.774);
+    animation: bounce_613 0.4s linear;
+    height: inherit;
+}
+@keyframes bounce_613 {
+    40% {
+      transform: scale(1.4);
+    }
+  
+    60% {
+      transform: scale(0.8);
+    }
+  
+    80% {
+      transform: scale(1.2);
+    }
+  
+    100% {
+      transform: scale(1);
+    }
+  }
+
+  .home {
+  position: relative;
+  height: 650px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: aliceblue;
+  text-shadow: 2px 2px black;
+  font-size: 36px;
+  font-weight: bold;
+/*   background-image: url("https://www.annauniv.edu/DIST/assests/department_home.jpg");
+  background-size: cover; 
+    opacity: 0.8;
+    */
+
+}
+
+.home::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* semi-transparent black overlay */
+  z-index: -1; /* set the z-index to lower than the text content */
+}
+
+
+
+		
+		.home h1 {
+			margin: 0;
+			padding: 0;
+      margin-top: 0px;
+			font-size: 40px;
+			line-height: 1.2;
+			text-transform: uppercase;
+			letter-spacing: 5px;
+			text-shadow: 4px 4px black;
+		}
+		
+		.home p {
+			text-align: center;
+			font-size: 24px;
+			line-height: 1.5;
+			max-width: 800px;
+			text-shadow: 2px 2px black;
+		}
+
+  .card12 {
+    width: 100%;
+    height: 100px;
+    max-height: 200px;
+    max-width: 2350px;
+    margin: auto auto; /* Center the element horizontally */
+    background-color: #060633;
+    color: #fff;
+    padding: 10px;
+    box-sizing: border-box;
+  }
+
+  /* Media query for mobile screens */
+  @media only screen and (max-width: 480px) {
+    .card12 {
+      max-width: 100%;
+    }
+  }
+  .map {
+  width: 400px;
+  height: 300px;
+  margin-top: 25px;
+  border: 2px solid black !important;
+  margin-left: 0px;
+}
+#details {
+  color: #fff;
+  padding: 50px 0;
+}
+
+#map-cont {
+  position: relative;
+  padding-bottom: 56.25%;
+  height: 0;
+  overflow: hidden;
+}
+
+#map-cont iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.contact-details {
+  padding: 20px;
+  border: 1px solid #fff;
+  margin-top: 20px;
+}
+
+.contact-details h4 {
+  font-size: 20px;
+  margin-bottom: 20px;
+}
+
+.contact-details p {
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+
+@media (max-width: 767px) {
+  .contact-details {
+    margin-top: 0;
+  }
+}
+nav .h2{
+  margin-left: 20px;
+}
+
+    </style>
+    <script>
+      function toggleMobileMenu(){
+
+      };
+    </script>
+</head>
+<body>
+    <nav>
+        <div class="logo">
+            <img src="https://ceg.annauniv.edu/univdept/cent_fac.png" alt="Logo">
+            
+        </div>
+        <h2>IST Alumni-Student job Portal</h2>
+        <ul class="menu">
+            <li><a class="hp" href="#home">Home</a></li>
+            <li><a class="hp" href="#services">Service</a></li>
+            <li><a class="hp" href="#contact">Contact</a></li>
+            <li><a class="hp" href="#details">Details</a></li>
+        </ul>
+        <div class="hamburger-menu" onclick="toggleMobileMenu()">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <div id="mobile-menu" style="display:none;">
+            <ul>
+                <li><a href="#home">Home</a></li>
+                <li><a href="#services">Service</a></li>
+                <li><a href="#contact">Contact</a></li>
+                <li><a href="#details">Details</a></li>
+            </ul>
+        </div>
+      </nav>
+
+    <main>
+      <section id="home" class="home">
+        <h1>Welcome to IST Alumni-Student Job Portal</h1>
+        <p>A centralized platform for IST Alumni and Students</p>
+      </section>
+        <section id="services">
+            <div class="container">
+                <a href="/alumnilogin" class="card-link">
+                    <div class="card">
+                        <div class="card2">
+                            <p>Alumni <br>Section</p>
+                        </div>
+                    </div>
+                </a>
+                <a href="/studentlogin" class="card-link">
+                    <div class="card">
+                        <div class="card2">
+                            <p>Students <br>Section</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </section>
+        <section id="contact">
+            <div>
+                <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+              </div>
+                <div class="card12">
+                    <span>Social</span>
+                    <a class="social-link" href="https://youtube.com/">
+                      <svg  version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 461.001 461.001" xml:space="preserve" ><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <g> <path style="fill:#F61C0D;" d="M365.257,67.393H95.744C42.866,67.393,0,110.259,0,163.137v134.728 c0,52.878,42.866,95.744,95.744,95.744h269.513c52.878,0,95.744-42.866,95.744-95.744V163.137 C461.001,110.259,418.135,67.393,365.257,67.393z M300.506,237.056l-126.06,60.123c-3.359,1.602-7.239-0.847-7.239-4.568V168.607 c0-3.774,3.982-6.22,7.348-4.514l126.06,63.881C304.363,229.873,304.298,235.248,300.506,237.056z"></path> </g> </g></svg>
+                    </a>
+                    <a class="social-link" href="https://www.instagram.com/ista__ceg/">
+                      <svg viewBox="0 -28.5 256 256" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" preserveAspectRatio="xMidYMid" fill="#000000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <g> <path d="M216.856339,16.5966031 C200.285002,8.84328665 182.566144,3.2084988 164.041564,0 C161.766523,4.11318106 159.108624,9.64549908 157.276099,14.0464379 C137.583995,11.0849896 118.072967,11.0849896 98.7430163,14.0464379 C96.9108417,9.64549908 94.1925838,4.11318106 91.8971895,0 C73.3526068,3.2084988 55.6133949,8.86399117 39.0420583,16.6376612 C5.61752293,67.146514 -3.4433191,116.400813 1.08711069,164.955721 C23.2560196,181.510915 44.7403634,191.567697 65.8621325,198.148576 C71.0772151,190.971126 75.7283628,183.341335 79.7352139,175.300261 C72.104019,172.400575 64.7949724,168.822202 57.8887866,164.667963 C59.7209612,163.310589 61.5131304,161.891452 63.2445898,160.431257 C105.36741,180.133187 151.134928,180.133187 192.754523,160.431257 C194.506336,161.891452 196.298154,163.310589 198.110326,164.667963 C191.183787,168.842556 183.854737,172.420929 176.223542,175.320965 C180.230393,183.341335 184.861538,190.991831 190.096624,198.16893 C211.238746,191.588051 232.743023,181.531619 254.911949,164.955721 C260.227747,108.668201 245.831087,59.8662432 216.856339,16.5966031 Z M85.4738752,135.09489 C72.8290281,135.09489 62.4592217,123.290155 62.4592217,108.914901 C62.4592217,94.5396472 72.607595,82.7145587 85.4738752,82.7145587 C98.3405064,82.7145587 108.709962,94.5189427 108.488529,108.914901 C108.508531,123.290155 98.3405064,135.09489 85.4738752,135.09489 Z M170.525237,135.09489 C157.88039,135.09489 147.510584,123.290155 147.510584,108.914901 C147.510584,94.5396472 157.658606,82.7145587 170.525237,82.7145587 C183.391518,82.7145587 193.761324,94.5189427 193.539891,108.914901 C193.539891,123.290155 183.391518,135.09489 170.525237,135.09489 Z" fill="#5865F2" fill-rule="nonzero"> </path> </g> </g></svg>
+                    </a>
+                    <a class="social-link" href="https://www.instagram.com/ista__ceg/">
+                      <svg width="100%" height="100%" viewBox="0 0 200 200">
+                        <defs>
+                            <!-- 矩形的線性漸層 -->
+                            <linearGradient id="gradient1" x1=".8" y1=".8" x2="0">
+                                <stop offset="0" stop-color="#c92bb7"/>
+                                <stop offset="1" stop-color="#3051f1"/>
+                            </linearGradient>
+                            <!-- 矩形的放射漸層 -->
+                            <radialGradient id="gradient2" cx=".2" cy="1" r="1.2">
+                                <stop offset="0" stop-color="#fcdf8f"/>
+                                <stop offset=".1" stop-color="#fbd377"/>
+                                <stop offset=".25" stop-color="#fa8e37"/>
+                                <stop offset=".35" stop-color="#f73344"/>
+                                <stop offset=".65" stop-color="#f73344" stop-opacity="0" />
+                            </radialGradient>
+                            <!-- 矩形外框 -->
+                            <rect id="logoContainer" x="0" y="0" width="200" height="200" rx="50" ry="50" />
+                        </defs>
+                
+                        <!-- colorful 的背景 -->
+                        <use xlink:href="#logoContainer" fill="url(#gradient1)" />
+                        <use xlink:href="#logoContainer" fill="url(#gradient2)" />
+                
+                        <!-- 相機外框 -->
+                        <rect x="35" y="35" width="130" height="130" rx="30" ry="30"
+                              fill="none" stroke="#fff" stroke-width="13" />
+                
+                        <!-- 鏡頭外框 -->
+                        <circle cx="100" cy="100" r="32"
+                                fill="none" stroke="#fff" stroke-width="13" />
+                
+                        <!-- 閃光燈 -->
+                        <circle cx="140" cy="62" r="9" fill="#fff"/>
+                    </svg></a>
+                  </div>
+        </section>
+        <section id="details">
+          <div class="container">
+            <div class="row">
+              <div class="col-md-8">
+                <div id="map-cont">
+                  <iframe class="map" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3887.356980906954!2d80.23374941407889!3d13.012924417492853!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a5267a1dbf3955d%3A0xa2016d5a35abce76!2sDepartment+of+Information+Science+and+Technology!5e0!3m2!1sen!2sin!4v1515091454666" style="width:100%; height:350px; border:0;" allowfullscreen=""></iframe>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="contact-details">
+                  <a style="color: aliceblue;" href="https://www.annauniv.edu/DIST/">Department of Information Science and Technology</a>
+                  <p>CEG Campus, Anna University, Chennai-25.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+        
+        
+    </main>
+    <footer>
+        <!-- Your footer content goes here -->
+    </footer>
+</body>
+</html>
